@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'vagrant/ca/certificates/version'
+require 'vagrant-ca-certificates/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "vagrant-ca-certificates"
-  spec.version       = Vagrant::Ca::Certificates::VERSION
+  spec.version       = VagrantPlugins::CaCertificates::VERSION
   spec.authors       = ["William Bailey"]
   spec.email         = ["wbailey4@bloomberg.net"]
   spec.summary       = %q{Install custom CA certificates}

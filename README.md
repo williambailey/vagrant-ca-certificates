@@ -1,4 +1,4 @@
-# Vagrant::Ca::Certificates
+# Vagrant::CaCertificates
 
 Vagrant plugin that allows you to install custom CS certificates
 
