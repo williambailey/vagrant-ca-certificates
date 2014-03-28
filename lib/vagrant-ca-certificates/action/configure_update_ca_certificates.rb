@@ -42,14 +42,16 @@ module VagrantPlugins
           conf_file = config_conf
           conf_dir  = config_dir
           logger.debug "Configuration (#{conf_file}): #{conf_dir}"
-          # something like...
-          # loop over all config certs
-          # comm.upload("xxxx.crt", "#{conf_file}/xxxx.crt")
-          # comm.sudo("chmod '0644' #{conf_file}/xxxx.crt")
-          # comm.sudo("chown 'root:root' #{conf_file}/xxxx.crt")          
-          # comm.sudo("echo 'xxxx.crt' >> #{conf_file}")
-          # then
-          # comm.sudo("update-ca-certificates")
+          config.certs.each do |cert|
+            # TODO: check to see if cert is already installed.
+            cert_name   = File.basename(cert)
+            cert_target = File.join(conf_dir, cert_name)
+            comm.upload(cert, cert_target)
+            comm.sudo("chmod '0644' #{cert_target}")
+            comm.sudo("chown 'root:root' #{cert_target}")
+            comm.sudo("echo #{cert_name} >> #{conf_file}")
+          end
+          comm.sudo("update-ca-certificates")
         end
 
         def supported?
