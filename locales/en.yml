@@ -1,0 +1,12 @@
+en:
+  vagrant_ca_certificates:
+    update_ca_certificates:
+      not_enabled: |-
+        update_ca_certificates not enabled or configured
+      not_supported: |-
+        Skipping update_ca_certificates config as the machine does not support it
+      configuring: |-
+        Configuring proxy for update_ca_certificates...  
+    errors:
+      vagrant_version: |-
+        vagrant-ca-certificates plugin requires Vagrant version %{requirement}
