@@ -52,11 +52,6 @@ module VagrantPlugins
           # comm.sudo("update-ca-certificates")
         end
 
-        def cap_name
-          "ca_certificates_dir".to_sym
-          "ca_certificates_conf".to_sym
-        end
-
         def supported?
           @machine.guest.capability?("ca_certificates_dir".to_sym) &&
             @machine.guest.capability("ca_certificates_dir".to_sym) &&
