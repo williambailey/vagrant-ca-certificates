@@ -16,3 +16,7 @@ Vagrant plugin that allows you to install custom CA certificates
     $ vagrant plugin uninstall vagrant-ca-certificates
     $ gem build vagrant-ca-certificates.gemspec
     $ vagrant plugin install vagrant-ca-certificates --plugin-source vagrant-ca-certificates-0.0.1.gem
+
+## TODO:
+
+- Get the capabilitiy check working correctly in the `ConfigureUpdateCaCertificates` class.

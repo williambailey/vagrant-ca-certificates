@@ -39,36 +39,30 @@ module VagrantPlugins
 
         # Configures the VM based on the config
         def configure_machine
-          conf_file = config_conf
-          conf_dir  = config_dir
-          logger.debug "Configuration (#{conf_file}): #{conf_dir}"
+          conf_file = "/etc/ca-certificates.conf"
+          conf_dir  = "/usr/share/ca-certificates/"
           config.certs.each do |cert|
-            # TODO: check to see if cert is already installed.
             cert_name   = File.basename(cert)
+            cert_upload = "/tmp/vagrant-ca-cert-#{cert_name}"
             cert_target = File.join(conf_dir, cert_name)
-            comm.upload(cert, cert_target)
-            comm.sudo("chmod '0644' #{cert_target}")
-            comm.sudo("chown 'root:root' #{cert_target}")
-            comm.sudo("echo #{cert_name} >> #{conf_file}")
+            @machine.communicate.tap do |comm|
+              comm.sudo("rm #{cert_upload}", error_check: false)
+              comm.upload(cert, cert_upload)
+              comm.sudo("chmod '0644' #{cert_upload}")
+              comm.sudo("chown 'root:root' #{cert_upload}")
+              comm.sudo("mv '#{cert_upload}' #{cert_target}")
+              comm.sudo("echo #{cert_name} >> #{conf_file}")
+              comm.sudo("update-ca-certificates")
+            end
           end
-          comm.sudo("update-ca-certificates")
         end
 
         def supported?
-          @machine.guest.capability?("ca_certificates_dir".to_sym) &&
-            @machine.guest.capability("ca_certificates_dir".to_sym) &&
-              @machine.guest.capability?("ca_certificates_conf".to_sym) &&
-                @machine.guest.capability("ca_certificates_conf".to_sym)
+          # TODO: Figure out why the capability isn't working.
+          return true
+          @machine.guest.capability?("update_ca_certificates".to_sym) &&
+            @machine.guest.capability("update_ca_certificates".to_sym)
         end
-
-        def config_dir
-          @machine.guest.capability("ca_certificates_dir".to_sym)
-        end
-
-        def config_conf
-          @machine.guest.capability("ca_certificates_conf".to_sym)
-        end
-
 
       end
     end
