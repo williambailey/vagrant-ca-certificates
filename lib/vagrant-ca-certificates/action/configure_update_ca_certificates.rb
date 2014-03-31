@@ -12,7 +12,7 @@ module VagrantPlugins
         def call(env)
           @machine = env[:machine]
 
-          if !config.enabled?
+          if !config.enabled? || config.enabled != true
             logger.info I18n.t("vagrant_ca_certificates.update_ca_certificates.not_enabled")
           elsif !supported?
             logger.info I18n.t("vagrant_ca_certificates.update_ca_certificates.not_supported")
