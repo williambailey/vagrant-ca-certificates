@@ -18,7 +18,7 @@ module VagrantPlugins
             logger.info I18n.t("vagrant_ca_certificates.update_ca_certificates.not_supported")
           else
             env[:ui].info I18n.t("vagrant_ca_certificates.update_ca_certificates.configuring")
-            configure_machine
+            configure_machine env
           end
 
           @app.call env
@@ -38,7 +38,7 @@ module VagrantPlugins
         end
 
         # Configures the VM based on the config
-        def configure_machine
+        def configure_machine(env)
           conf_file = "/etc/ca-certificates.conf"
           conf_dir  = "/usr/share/ca-certificates/"
           config.certs.each do |cert|
@@ -46,6 +46,7 @@ module VagrantPlugins
             cert_upload = "/tmp/vagrant-ca-cert-#{cert_name}"
             cert_target = File.join(conf_dir, cert_name)
             @machine.communicate.tap do |comm|
+              env[:ui].info I18n.t("vagrant_ca_certificates.certificate.install", crt: cert_name)
               comm.sudo("rm #{cert_upload}", error_check: false)
               comm.upload(cert, cert_upload)
               comm.sudo("chmod '0644' #{cert_upload}")

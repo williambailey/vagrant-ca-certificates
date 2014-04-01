@@ -6,7 +6,10 @@ en:
       not_supported: |-
         Skipping update_ca_certificates config as the machine does not support it
       configuring: |-
-        Configuring CA certificates on the guest...  
+        Configuring CA certificates using update-ca-certificates on the guest...  
+    certificate:
+      install: |-
+        -- Installing %{crt}
     errors:
       vagrant_version: |-
         vagrant-ca-certificates plugin requires Vagrant version %{requirement}
