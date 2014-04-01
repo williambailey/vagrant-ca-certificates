@@ -11,7 +11,7 @@ module VagrantPlugins
       VAGRANT_VERSION_REQUIREMENT = '>= 1.4.0'
 
       # A list of plugins whose action classes we hook to if installed
-      OPTIONAL_PLUGIN_DEPENDENCIES = %w[vagrant-aws vagrant-omnibus vagrant-vbguest]
+      OPTIONAL_PLUGIN_DEPENDENCIES = %w[vagrant-omnibus]
 
       # Returns true if the Vagrant version fulfills the requirements
       #

@@ -15,20 +15,11 @@ module VagrantPlugins
           hook.after Vagrant::Action::Builtin::SyncedFolders, Action.configure
         end
 
-        # vagrant-aws < 0.4.0 uses a non-standard provision action
-        if defined?(VagrantPlugins::AWS::Action::TimedProvision)
-          hook.after VagrantPlugins::AWS::Action::TimedProvision, Action.configure
-        end
-
         # configure the certificates before vagrant-omnibus
         if defined?(VagrantPlugins::Omnibus::Action::InstallChef)
           hook.after VagrantPlugins::Omnibus::Action::InstallChef, Action.configure
         end
 
-        # configure the certificates before vagrant-vbguest
-        if defined?(VagrantVbguest::Middleware)
-          hook.before VagrantVbguest::Middleware, Action.configure(before: true)
-        end
       end
 
       # Actions to run after each provisioner run
