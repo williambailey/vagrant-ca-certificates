@@ -40,22 +40,37 @@ module VagrantPlugins
         # Configures the VM based on the config
         def configure_machine(env)
           conf_file = "/etc/ca-certificates.conf"
-          conf_dir  = "/usr/share/ca-certificates/"
-          config.certs.each do |cert|
-            cert_name   = File.basename(cert)
-            cert_upload = "/tmp/vagrant-ca-cert-#{cert_name}"
-            cert_target = File.join(conf_dir, cert_name)
-            @machine.communicate.tap do |comm|
-              env[:ui].info I18n.t("vagrant_ca_certificates.certificate.install", crt: cert_name)
+          conf_dir  = "/usr/share/ca-certificates/vagrant"
+
+          @machine.communicate.tap do |comm|
+            comm.sudo("rm -f #{conf_dir}/*", error_check: false)
+            comm.sudo("mkdir #{conf_dir}", error_check: false)
+            comm.sudo("chown 'root:root' #{conf_dir}")
+            comm.sudo("chmod '0755' #{conf_dir}")
+            comm.sudo("sed -i '/^vagrant/ d' '#{conf_file}'")
+            i = 0
+            config.certs.each do |cert|
+              i += 1
+              cert_name   = File.basename(cert)
+              cert_file   = "#{i}_#{cert_name}"
+              cert_upload = "/tmp/vagrant-ca-cert-#{cert_file}"
+              cert_target = File.join(conf_dir, cert_file)
+              env[:ui].info I18n.t("vagrant_ca_certificates.certificate.install", crt: cert_file)
               comm.sudo("rm #{cert_upload}", error_check: false)
               comm.upload(cert, cert_upload)
               comm.sudo("chmod '0644' #{cert_upload}")
               comm.sudo("chown 'root:root' #{cert_upload}")
               comm.sudo("mv '#{cert_upload}' #{cert_target}")
-              comm.sudo("echo #{cert_name} >> #{conf_file}")
-              comm.sudo("update-ca-certificates")
+              comm.sudo("echo vagrant/#{cert_file} >> #{conf_file}")
+            end
+            comm.sudo("update-ca-certificates") do |type, data|
+              if [:stderr, :stdout].include?(type)
+                next if data =~ /stdin: is not a tty/
+                env[:ui].info(data)
+              end
             end
           end
+
         end
 
         def supported?
