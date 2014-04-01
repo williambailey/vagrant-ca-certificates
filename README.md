@@ -20,3 +20,4 @@ Vagrant plugin that allows you to install custom CA certificates
 ## TODO:
 
 - Get the capabilitiy check working correctly in the `ConfigureUpdateCaCertificates` class.
+- The plugin is run more then once at different points in the provisioning. It should really only run once.
