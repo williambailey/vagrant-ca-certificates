@@ -4,7 +4,7 @@ Vagrant plugin that allows you to install custom CA certificates
 
 ## Installation
 
-    vagrant plugin install vagrant-ca-certificates
+    vagrant plugin install vagrant-ca-certificates --plugin-source http://rubygems.dev.bloomberg.com/
 
 ## Configuration
 
