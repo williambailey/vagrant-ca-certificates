@@ -8,8 +8,7 @@ module VagrantPlugins
         end
 
         def call(env)
-          env[:result] = plugin_enabled?(env[:machine].config.proxy)
-
+          env[:result] = plugin_enabled?(env[:machine].config.ca_certificates)
           @app.call(env)
         end
 
