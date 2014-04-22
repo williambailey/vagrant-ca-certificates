@@ -9,6 +9,9 @@ module VagrantPlugins
 
         def call(env)
           env[:result] = plugin_enabled?(env[:machine].config.ca_certificates)
+          if !env[:result] then
+            env[:ui].info I18n.t("vagrant_ca_certificates.not_enabled")
+          end
           @app.call(env)
         end
 

@@ -12,7 +12,7 @@ module VagrantPlugins
           certs_path = File.join(config.certs_path, 'vagrant')
 
           @machine.communicate.tap do |vm|
-            env[:ui].info I18n.t("vagrant_ca_certificates.certificate.pre_upload", path: certs_path)
+            env[:ui].info I18n.t("vagrant_ca_certificates.certificate.upload.pre", path: certs_path)
             vm.sudo("mkdir -p '#{certs_path}'", error_check: false)
             vm.sudo("rm -rf '#{certs_path}'/*", error_check: false)
             vm.sudo("chown 'vagrant:vagrant' '#{certs_path}'")
@@ -21,14 +21,14 @@ module VagrantPlugins
             config.certs.each do |from|
               i += 1
               to = File.join(certs_path, "#{i}_#{File.basename(from)}")
-              env[:ui].info I18n.t("vagrant_ca_certificates.certificate.upload", from: from, to: File.basename(to))
+              env[:ui].info I18n.t("vagrant_ca_certificates.certificate.upload.cert", from: from, to: File.basename(to))
               vm.sudo("rm '#{to}'", error_check: false)
               vm.upload(from, to)
               vm.sudo("chown 'root:root' '#{to}'")
               vm.sudo("chmod '0644' '#{to}'")
             end unless config.certs.length == 0
             vm.sudo("chown 'root:root' '#{certs_path}'")
-            env[:ui].info I18n.t("vagrant_ca_certificates.certificate.post_upload")
+            env[:ui].info I18n.t("vagrant_ca_certificates.certificate.upload.post")
           end          
 
           @app.call(env)
