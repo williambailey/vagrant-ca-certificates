@@ -9,7 +9,7 @@ module VagrantPlugins
         def call(env)
           @machine = env[:machine]
           config = @machine.config.ca_certificates
-          certs_path = File.join(config.certs_path, 'vagrant')
+          certs_path = config.certs_path
 
           @machine.communicate.tap do |vm|
             env[:ui].info I18n.t("vagrant_ca_certificates.certificate.upload.pre", path: certs_path)
