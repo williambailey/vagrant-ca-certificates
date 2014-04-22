@@ -11,17 +11,24 @@ module VagrantPlugins
           config = @machine.config.ca_certificates
           certs_path = File.join(config.certs_path, 'vagrant')
 
-          # All of this tomfoolery to simply upload certificates to the guest. First create
-          # the temporary directory and permenant directory for the certificates. After that
-          # use elevated privileges to move them into latter directory.
           @machine.communicate.tap do |vm|
-            vm.execute('mkdir -p /tmp/vagrant-ca-certificates')
-            vm.sudo("mkdir -p #{certs_path}")  
+            env[:ui].info I18n.t("vagrant_ca_certificates.certificate.upload.pre", path: certs_path)
+            vm.sudo("mkdir -p '#{certs_path}'", error_check: false)
+            vm.sudo("rm -rf '#{certs_path}'/*", error_check: false)
+            vm.sudo("chown 'vagrant:vagrant' '#{certs_path}'")
+            vm.sudo("chmod '0755' '#{certs_path}'")
+            i = 0
             config.certs.each do |from|
-              vm.upload(from, "/tmp/vagrant-ca-certificates/#{File.basename(from)}")
+              i += 1
+              to = File.join(certs_path, "#{i}_#{File.basename(from)}")
+              env[:ui].info I18n.t("vagrant_ca_certificates.certificate.upload.cert", from: from, to: File.basename(to))
+              vm.sudo("rm '#{to}'", error_check: false)
+              vm.upload(from, to)
+              vm.sudo("chown 'root:root' '#{to}'")
+              vm.sudo("chmod '0644' '#{to}'")
             end unless config.certs.length == 0
-            vm.sudo("find /tmp/vagrant-ca-certificates -type f -maxdepth 1 -exec mv {} #{certs_path}/ \\;")
-            vm.sudo('rm -rf /tmp/vagrant-ca-certificates')
+            vm.sudo("chown 'root:root' '#{certs_path}'")
+            env[:ui].info I18n.t("vagrant_ca_certificates.certificate.upload.post")
           end          
 
           @app.call(env)

@@ -21,12 +21,13 @@ module VagrantPlugins
           @certs = [] if @certs == UNSET_VALUE
           @certs_path = '/usr/share/ca-certificates' if @certs_path == UNSET_VALUE
 
-          @certs.each do |cert|
-            next unless cert.is_a?(URL)
-            tempfile = Tempfile.new(['cacert', '.pem'])
-            Vagrant::Util::Downloader.new(cert.to_s, tempfile.path)
-            cert = tempfile.path
-          end
+          # This blows up with "...CaCertificates::URL (NameError)"
+          #@certs.each do |cert|
+          #  next unless cert.is_a?(URL)
+          #  tempfile = Tempfile.new(['cacert', '.pem'])
+          #  Vagrant::Util::Downloader.new(cert.to_s, tempfile.path)
+          #  cert = tempfile.path
+          #end
         end
       end
     end
