@@ -1,7 +1,8 @@
 require 'vagrant/action/builtin/call'
-require_relative 'action/configure_update_ca_certificates'
 require_relative 'action/is_enabled'
 require_relative 'action/only_once'
+require_relative 'action/update_certificates'
+require_relative 'action/upload_certificates'
 
 module VagrantPlugins
   module CaCertificates
@@ -18,17 +19,6 @@ module VagrantPlugins
         Vagrant::Action::Builder.build(OnlyOnce, opts, &config_actions)
       end
 
-      # Returns an action middleware stack that configures the VM
-      # after provisioner runs.
-      def self.configure_after_provisoner
-        Vagrant::Action::Builder.new.tap do |b|
-          b.use Builtin::Call, IsEnabled do |env, b2|
-            next if !env[:result]
-            b2.use ConfigureUpdateCaCertificates
-          end
-        end
-      end
-
       private
 
       # @return [Proc] the block that adds config actions to the specified
@@ -36,11 +26,13 @@ module VagrantPlugins
       def self.config_actions
         @config_actions ||= Proc.new do |b|
           b.use Builtin::Call, IsEnabled do |env, b2|
-            next if !env[:result]
-            b2.use ConfigureUpdateCaCertificates
+            next unless env[:result]
+            b2.use UploadCertificates
+            b2.use UpdateCertificates
           end
         end
       end
+
     end
   end
 end

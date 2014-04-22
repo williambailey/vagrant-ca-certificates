@@ -21,12 +21,6 @@ module VagrantPlugins
         end
 
       end
-
-      # Actions to run after each provisioner run
-      action_hook 'ca_certificates_configure', :provisioner_run do |hook|
-        require_relative 'action'
-        hook.after :run_provisioner, Action.configure_after_provisoner
-      end
     end
   end
 end
