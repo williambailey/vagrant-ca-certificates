@@ -8,8 +8,12 @@ en:
       configuring: |-
         Configuring CA certificates using update-ca-certificates on the guest...  
     certificate:
-      install: |-
-        -- Installing %{crt}
+      pre_upload: |-
+        Uploading certificates to %{path}
+      upload: |-
+        -- %{from} => %{to}
+      post_upload: |-
+        Done.
     errors:
       vagrant_version: |-
         vagrant-ca-certificates plugin requires Vagrant version %{requirement}
