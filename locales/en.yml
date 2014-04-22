@@ -5,7 +5,7 @@ en:
     certificate:
       upload:
         pre: |-
-          Uploading certificates to %{path}...
+          Uploading certificates to '%{path}'...
         cert: |-
           -- %{from} => %{to}
         post: |-

@@ -19,7 +19,7 @@ module VagrantPlugins
         def finalize!
           @enabled = false if @enabled == UNSET_VALUE
           @certs = [] if @certs == UNSET_VALUE
-          @certs_path = '/usr/share/ca-certificates' if @certs_path == UNSET_VALUE
+          @certs_path = '/usr/share/ca-certificates/vagrant' if @certs_path == UNSET_VALUE
 
           # This blows up with "...CaCertificates::URL (NameError)"
           #@certs.each do |cert|

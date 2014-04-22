@@ -5,7 +5,7 @@ module VagrantPlugins
         # Capability for configuring the certificate bundle on Redhat.
         module UpdateCertificates
           def self.update_certificates(machine)
-            ca_certs = File.join(machine.config.ca_certificates.certs_path, 'vagrant')
+            ca_certs = machine.config.ca_certificates.certs_path
             ca_bundle = '/etc/pki/tls/certs/ca-bundle.crt'
 
             # Assume that all of the certificates have been uploaded and just concatenate
