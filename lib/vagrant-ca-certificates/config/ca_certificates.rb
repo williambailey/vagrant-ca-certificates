@@ -1,6 +1,5 @@
 require 'vagrant'
 require 'vagrant/util/downloader'
-require 'tempfile'
 
 module VagrantPlugins
   module CaCertificates
