@@ -1,3 +1,5 @@
+require 'vagrant/util/downloader'
+
 module VagrantPlugins
   module CaCertificates
     class Action
@@ -18,21 +20,34 @@ module VagrantPlugins
             vm.sudo("chown 'vagrant:vagrant' '#{certs_path}'")
             vm.sudo("chmod '0755' '#{certs_path}'")
             i = 0
-            config.certs.each do |from|
+            config.certs.each do |cert|
               i += 1
-              to = File.join(certs_path, "#{i}_#{File.basename(from)}")
-              env[:ui].info I18n.t("vagrant_ca_certificates.certificate.upload.cert", from: from, to: File.basename(to))
-              vm.sudo("rm '#{to}'", error_check: false)
-              vm.upload(from, to)
-              vm.sudo("chown 'root:root' '#{to}'")
-              vm.sudo("chmod '0644' '#{to}'")
+              if cert =~ /^https?:\/\//
+                tmp_file = Dir::Tmpname.create(["#{VagrantPlugins::CaCertificates::Plugin.name}_", '.crt']) { }
+                env[:ui].info I18n.t("vagrant_ca_certificates.certificate.upload.download", from: cert)
+                Vagrant::Util::Downloader.new(cert, tmp_file).download!
+                self.upload(env[:ui], vm, i, tmp_file, certs_path)
+                File::unlink(tmp_file)
+              else
+                self.upload(env[:ui], vm, i, cert, certs_path)
+              end
             end unless config.certs.length == 0
             vm.sudo("chown 'root:root' '#{certs_path}'")
             env[:ui].info I18n.t("vagrant_ca_certificates.certificate.upload.post")
-          end          
+          end
 
           @app.call(env)
         end
+
+        def upload(ui, vm, cert_number, from, certs_path)
+          to = File.join(certs_path, "#{cert_number}_#{File.basename(from)}")
+          ui.info I18n.t("vagrant_ca_certificates.certificate.upload.cert", from: from, to: File.basename(to))
+          vm.sudo("rm '#{to}'", error_check: false)
+          vm.upload(from, to)
+          vm.sudo("chown 'root:root' '#{to}'")
+          vm.sudo("chmod '0644' '#{to}'")
+        end
+
       end
     end
   end

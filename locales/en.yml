@@ -6,6 +6,8 @@ en:
       upload:
         pre: |-
           Uploading certificates to '%{path}'...
+        download: |-
+          -- Downloading %{from}
         cert: |-
           -- %{from} => %{to}
         post: |-
