@@ -17,8 +17,8 @@ module VagrantPlugins
             env[:ui].info I18n.t("vagrant_ca_certificates.certificate.upload.pre", path: certs_path)
             vm.sudo("mkdir -p '#{certs_path}'", error_check: false)
             vm.sudo("rm -rf '#{certs_path}'/*", error_check: false)
-            vm.sudo("chown 'vagrant:vagrant' '#{certs_path}'")
-            vm.sudo("chmod '0755' '#{certs_path}'")
+            vm.sudo("chown 'root:root' '#{certs_path}'")
+            vm.sudo("chmod '0777' '#{certs_path}'")
             i = 0
             config.certs.each do |cert|
               i += 1
@@ -32,7 +32,7 @@ module VagrantPlugins
                 self.upload(env[:ui], vm, i, cert, certs_path)
               end
             end unless config.certs.length == 0
-            vm.sudo("chown 'root:root' '#{certs_path}'")
+            vm.sudo("chmod '0755' '#{certs_path}'")
             env[:ui].info I18n.t("vagrant_ca_certificates.certificate.upload.post")
           end
 
