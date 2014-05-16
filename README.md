@@ -2,7 +2,9 @@
 
 A Vagrant plugin that installs CA certificates onto the virtual machine.
 
-This is useful, for example, in the case where you are behind a corporate proxy server that injects its own self signed SSL certificates when you visit https sites.
+This is useful, for example, in the case where you are behind a corporate
+proxy server that injects its own self signed SSL certificates when you
+visit https sites.
 
 ## Installation
 
@@ -20,6 +22,13 @@ config.ca_certificates.certs = [
   "http://example.com/ca_baz.crt"
 ]
 ```
+
+As shown above certificates can sourced from the local file system or
+via http(s).
+
+The Vagrant plugin expects the certificates to be in encoded using the
+PEM format. They are Base64 encoded ASCII files and contain
+`-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----` statements.
 
 ## Installing the plugin locally
 
