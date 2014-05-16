@@ -6,16 +6,24 @@ This is useful, for example, in the case where you are behind a corporate proxy 
 
 ## Installation
 
-    vagrant plugin install vagrant-ca-certificates
+```bash
+vagrant plugin install vagrant-ca-certificates
+```
 
 ## Configuration
 
-    config.ca_certificates.enabled = true
-    config.ca_certificates.certs = ["/path/to/ca_foo.crt", "/path/to/ca_bar.crt", "http://example.com/ca_baz.crt"]
+```ruby
+config.ca_certificates.enabled = true
+config.ca_certificates.certs = [
+  "/path/to/ca_foo.crt",
+  "/path/to/ca_bar.crt",
+  "http://example.com/ca_baz.crt"
+]
+```
 
 ## Installing the plugin locally
 
-```
+```bash
 rm pkg/*.gem ; \
 vagrant plugin uninstall vagrant-ca-certificates ; \
 rake build && \
