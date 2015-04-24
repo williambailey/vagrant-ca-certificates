@@ -35,10 +35,10 @@ module VagrantPlugins
         def modify_etc_environment
           bundle_path = @machine.guest.capability(:certificate_file_bundle)
           @machine.communicate.tap do |sh|
-            if sh.test("greq -q '^SSL_CERT_FILE='")
-              sh.sudo(%Q(sed "s/^SSL_CERT_FILE=.*/SSL_CERT_FILE=#{bundle_path}/" -i /etc/environment))
+            if sh.test("grep -q '^SSL_CERT_FILE=' /etc/environment", shell: '/bin/bash')
+              sh.sudo(%{(sed "s/^SSL_CERT_FILE=.*/SSL_CERT_FILE=#{bundle_path}/" -i /etc/environment})
             else
-              sh.sudo(%Q(echo "SSL_CERT_FILE=#{bundle_path}" >> /etc/environment))
+              sh.sudo(%{echo "SSL_CERT_FILE=#{bundle_path}" >> /etc/environment})
             end
           end
         end
@@ -71,7 +71,7 @@ module VagrantPlugins
           md5sum = Digest::MD5.file(from)
           @machine.communicate.tap do |sh|
             return false unless sh.test("test -f #{from}")
-            return true if sh.test("test '#{md5sum}' = '$(md5sum to)'", shell: '/bin/bash')
+            return true if sh.test(%{test '#{md5sum}' = '$(md5sum "#{to}")'}, shell: '/bin/bash')
           end
           false
         end

@@ -4,7 +4,7 @@ module VagrantPlugins
       module Debian
         module CertificateFileBundle
           def self.certificate_file_bundle(m)
-            '/etc/pki/ssl/cert.pem'
+            '/etc/ssl/certs/ca-certificates.crt'
           end
         end
       end
