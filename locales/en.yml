@@ -1,24 +1,17 @@
 en:
   vagrant_ca_certificates:
-    not_enabled: |-
-      CA certificate configuration is NOT enabled.
+    unsupported:
+      guest_system: |
+        Plugin does not support guest operating system.
+      vagrant_version: |
+        Plugin does not support Vagrant version less than '%{requirement}'.
+    not_enabled: |
+      Plugin is not enabled.
     certificate:
-      upload:
-        pre: |-
-          Uploading certificates to '%{path}'...
-        download: |-
-          -- Downloading %{from}
-        cert: |-
+      not_found: |
+        Certificate '%{filepath}' not found on host system.
+      upload: 
+        message: |
+          Uploading root certificates to guest instance...
+        file: |
           -- %{from} => %{to}
-        post: |-
-          Done.
-      update:
-        not_supported: |-
-          CA certificarte configuration is NOT supported on this guest.      
-        pre: |-
-          Updating certificate configurtion...
-        post: |-
-          Done.
-    errors:
-      vagrant_version: |-
-        vagrant-ca-certificates plugin requires Vagrant version %{requirement}
