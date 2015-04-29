@@ -1,10 +1,13 @@
-# Vagrant::CaCertificates
-Vagrant plugin which installs trusted CA certificates into a guest.
+# CA Certificate Plugin for Vagrant
+A [Vagrant][4] plugin which configures the virtual machine to inject the
+specified certificates into the guest's root bundle. This is useful, for example,
+if your enterprise network has a firewall (or appliance) which utilizes
+[SSL interception][5].
 
-This is useful, for example, in the case where you are behind a corporate
-firewall appliance which performs SSL interception and supplies its own
-self-signed certificate. It also is useful in cases where your enterprise
-has a split-horizon certificate authority for internal sites.
+_Warning:_ This plugin adds certificates to the guest operating
+system's [root certificate bundle][6]. You should only use this if you know
+*exactly* what you are doing. This should *never* be used on a
+production machine.
 
 ## Installation
 The latest stable version of this plugin can be installed using the
@@ -68,31 +71,53 @@ driver:
     provision: true
     vagrantfiles:
         - "/home/kitchen/.kitchen.d/Vagrantfile"
-provisioner:
     http_proxy: "http://proxy.corporate.com:80"
     https_proxy: "http://proxy.corporate.com:80"
 ```
 
-## Configuration
+## Vagrant Configuration
+If you're just looking to inject the certificate *only for a single
+Vagrantfile* then you can simply use the following block anywhere
+within the Vagrant configuration. This enables the plugin and injects
+the specified certificates.
+
 ```ruby
-config.ca_certificates.enabled = true
-config.ca_certificates.certs = [
-  "/path/to/ca_foo.crt",
-  "/path/to/ca_bar.crt",
-  "http://example.com/ca_baz.crt"
-]
+Vagrant.configure('2') do |config|
+  config.ca_certificates.enable = true
+  config.ca_certificates.certs = Dir.glob('/etc/pki/ca-trust/source/anchors/*.crt')
+end
 ```
+### System Wide
+At [Bloomberg][1] we often find ourselves in a situation where we do
+not want to make modifications to open source tools, but we need them
+to work within our enterprise network. Using this default base configuration
+for Vagrant we're able to ensure that all runs will inject the appropriate
+certificates into the guest.
 
-As shown above certificates can sourced from the local file system or
-via http(s).
+Additionally if you need proxies modified in the guest as well an
+excellent choice is the [Vagrant Proxyconf plugin][2] which should
+handle everything you'll run into on a daily basis. Finally, we add the
+caching plugin so that we are not continually going out to the Internet
+on successive [Test Kitchen][3] and Vagrant runs.
 
-The Vagrant plugin expects the certificates to be in encoded using the
-PEM format. They are Base64 encoded ASCII files and contain
-`-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----` statements.
+This file should be saved to `$HOME/.vagrant.d/Vagrantfile`.
+```ruby
+# These are requirements for this base Vagrantfile. If they are not
+# installed there will be a warning message with Vagrant/test-kitchen.
+%w(vagrant-ca-certificates vagrant-proxyconf vagrant-cachier).each do |name|
+  fail "Please install the '#{name}' plugin!" unless Vagrant.has_plugin?(name)
+end
 
-## Authors
-- William Bailey - [@cowboysfromhell](https://twitter.com/cowboysfromhell) - ([mail@williambailey.org.uk](mailto:mail@williambailey.org.uk))
-- John Bellone - [@johnbellone](https://twitter.com/johnbellone) - ([jbellone@bloomberg.net](mailto:jbellone@bloomberg.net))
-
-## License
-Licensed under a [MIT license](LICENSE.txt).
+Vagrant.configure('2') do |config|
+  config.cache.scope = :box
+  config.proxy.enabled = true
+  config.ca_certificates.enable = true
+  config.ca_certificates.certs = Dir.glob('/etc/pki/ca-trust/source/anchors/*.crt')
+end
+```
+[1]: https://careers.bloomberg.com
+[2]: https://github.com/tmatilai/vagrant-proxyconf
+[3]: https://github.com/test-kitchen/test-kitchen
+[4]: https://github.com/mitchellh/vagrant
+[5]: http://en.wikipedia.org/wiki/Man-in-the-middle_attack
+[6]: http://en.wikipedia.org/wiki/Root_certificate
