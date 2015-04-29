@@ -1,4 +1,10 @@
 # CA Certificate Plugin for Vagrant
+<span class="badges">
+![Gem Version](https://img.shields.io/gem/v/vagrant-ca-certificates.svg)
+![Build Status](https://img.shields.io/travis/williambailey/vagrant-ca-certificates.svg)
+![License](https://img.shields.io/github/license/williambailey/vagrant-ca-certificates.svg)
+</span>
+
 A [Vagrant][4] plugin which configures the virtual machine to inject the
 specified certificates into the guest's root bundle. This is useful, for example,
 if your enterprise network has a firewall (or appliance) which utilizes
