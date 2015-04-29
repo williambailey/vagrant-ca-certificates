@@ -42,7 +42,7 @@ both the proxies and inject in our new certificate bundles.
 
 If you're following the complete tutorial here we're going to save
 this file in a newly created directory
-`~/.kitchen.d/Vagrantfile.rb`. This will be merged into the final
+`~/.kitchen/Vagrantfile.rb`. This will be merged into the final
 Vagrantfile configuration that the test-kitchen run will use to
 provision a new instance.
 ```ruby
@@ -69,16 +69,20 @@ specific variables, such as proxy configuration, from the repository's
 base kitchen configuration. Luckily test-kitchen merges in a local
 file, if it exists, at the time of the run.
 
-Here is an example of the local configuration file that we use to merge
-in the Vagrantfile that we've created in the above example.
+Here is an example of the local configuration file that we use to
+merge in the Vagrantfile that we've created in the above example. This
+can be saved into `$HOME/.kitchen/config.yml` to be applied to *all*
+test-kitchen runs for this user (on this host machine).
 ```yaml
 ---
 driver:
     provision: true
     vagrantfiles:
-        - "/home/kitchen/.kitchen.d/Vagrantfile"
+        - "/home/jbellone/.kitchen/Vagrantfile"
     http_proxy: "http://proxy.corporate.com:80"
     https_proxy: "http://proxy.corporate.com:80"
+    ftp_proxy: "http://proxy.corporate.com:80"
+    no_proxy: "localhost,127.0.0.1"
 ```
 
 ## Vagrant Configuration
@@ -103,10 +107,10 @@ certificates into the guest.
 Additionally if you need proxies modified in the guest as well an
 excellent choice is the [Vagrant Proxyconf plugin][2] which should
 handle everything you'll run into on a daily basis. Finally, we add the
-caching plugin so that we are not continually going out to the Internet
+[Vagrant cachier plugin][7] so that we are not continually going out to the Internet
 on successive [Test Kitchen][3] and Vagrant runs.
 
-This file should be saved to `$HOME/.vagrant.d/Vagrantfile`.
+This file should be saved to `$HOME/.kitchen/Vagrantfile.rb`.
 ```ruby
 # These are requirements for this base Vagrantfile. If they are not
 # installed there will be a warning message with Vagrant/test-kitchen.
@@ -127,3 +131,4 @@ end
 [4]: https://github.com/mitchellh/vagrant
 [5]: http://en.wikipedia.org/wiki/Man-in-the-middle_attack
 [6]: http://en.wikipedia.org/wiki/Root_certificate
+[7]: https://github.com/fgrehm/vagrant-cachier

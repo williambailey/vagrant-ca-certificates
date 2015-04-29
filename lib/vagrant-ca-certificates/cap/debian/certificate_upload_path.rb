@@ -4,7 +4,7 @@ module VagrantPlugins
       module Debian
         module CertificateUploadPath
           def self.certificate_upload_path(m)
-            '/usr/share/ca-certificates/vagrant'
+            '/usr/share/ca-certificates/private'
           end
         end
       end
