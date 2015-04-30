@@ -93,7 +93,7 @@ the specified certificates.
 
 ```ruby
 Vagrant.configure('2') do |config|
-  config.ca_certificates.enable = true
+  config.ca_certificates.enabled = true
   config.ca_certificates.certs = Dir.glob('/etc/pki/ca-trust/source/anchors/*.crt')
 end
 ```
@@ -121,7 +121,7 @@ end
 Vagrant.configure('2') do |config|
   config.cache.scope = :box
   config.proxy.enabled = true
-  config.ca_certificates.enable = true
+  config.ca_certificates.enabled = true
   config.ca_certificates.certs = Dir.glob('/etc/pki/ca-trust/source/anchors/*.crt')
 end
 ```
