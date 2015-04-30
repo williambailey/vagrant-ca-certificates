@@ -7,11 +7,11 @@ module VagrantPlugins
 
       def initialize
         @certs = UNSET_VALUE
-        @enable = false
+        @enabled = UNSET_VALUE
       end
 
       def enabled?
-        @enabled
+        @enabled == true
       end
 
       def disabled?
@@ -37,7 +37,7 @@ module VagrantPlugins
       end
 
       def finalize!
-        return unless enabled?
+        @enabled = false if @enabled == UNSET_VALUE
         @certs = [] if @certs == UNSET_VALUE
       end
     end
