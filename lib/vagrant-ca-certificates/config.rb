@@ -11,7 +11,7 @@ module VagrantPlugins
       end
 
       def enabled?
-        @enabled
+        @enabled == true
       end
 
       def disabled?

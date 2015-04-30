@@ -34,6 +34,7 @@ module VagrantPlugins
 
         def modify_etc_environment
           bundle_path = @machine.guest.capability(:certificate_file_bundle)
+          @logger.debug("Private certificate path: <#{bundle_path}>")
           @machine.communicate.tap do |sh|
             if sh.test("grep -q 'SSL_CERT_FILE' /etc/environment", shell: '/bin/bash')
               sh.sudo(%{sed "s/^SSL_CERT_FILE=.*/SSL_CERT_FILE=#{bundle_path}/" -i /etc/environment})
@@ -44,13 +45,16 @@ module VagrantPlugins
         end
 
         def create_certificates_directory
+          @logger.debug('Checking if private certificate directory is created...')
           @machine.communicate.tap do |sh|
             return if sh.test("test -d #{certs_path}")
+            @logger.info("Creating #{certs_path} for private certificates.")
             sh.sudo("mkdir -p #{certs_path} && chmod 0744 #{certs_path}")
           end
         end
 
         def upload_certificate(from, to)
+          @logger.debug("Uploading certificates #{from} -> #{to}")
           remote = Tempfile.new('vagrant-ca-certificates')
           if from =~ /^http[s]?/
             Vagrant::Util::Downloader.new(from, remote.path).download!
@@ -59,7 +63,7 @@ module VagrantPlugins
 
           @machine.communicate.tap do |sh|
             unless certificate_matches?(from, to)
-              remote = Tempfile.new('va')
+              remote = Tempfile.new('vagrant')
               @machine.ui.info(I18n.t('vagrant_ca_certificates.certificate.upload.file', from: from, to: to))
               sh.upload(from, remote.path)
               sh.sudo("mv #{remote.path} #{to} && chown root: #{to} && chmod 0644 #{to}")
@@ -69,9 +73,13 @@ module VagrantPlugins
 
         def certificate_matches?(from, to)
           md5sum = Digest::MD5.file(from)
+          @logger.debug("Verifying #{from} md5sum in guest...")
           @machine.communicate.tap do |sh|
             return false unless sh.test("test -f #{from}")
-            return true if sh.test(%{test '#{md5sum}' = '$(md5sum "#{to}")'}, shell: '/bin/bash')
+            if sh.test(%{test '#{md5sum}' = '$(md5sum "#{to}")'}, shell: '/bin/bash')
+              @logger.debug('Certificate md5sum in guest matches!')
+              return true
+            end
           end
           false
         end
