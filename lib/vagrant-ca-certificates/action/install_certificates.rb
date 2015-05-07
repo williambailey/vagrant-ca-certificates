@@ -37,7 +37,7 @@ module VagrantPlugins
           @logger.debug("Private certificate path: <#{bundle_path}>")
           @machine.communicate.tap do |sh|
             if sh.test("grep -q 'SSL_CERT_FILE' /etc/environment", shell: '/bin/bash')
-              sh.sudo(%{sed "s/^SSL_CERT_FILE=.*/SSL_CERT_FILE=#{bundle_path}/" -i /etc/environment})
+              sh.sudo(%{sed "s#^SSL_CERT_FILE=.*#SSL_CERT_FILE=#{bundle_path}#" -i /etc/environment})
             else
               sh.sudo(%{echo "SSL_CERT_FILE=#{bundle_path}" >> /etc/environment})
             end
