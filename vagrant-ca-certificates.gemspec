@@ -21,6 +21,9 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(/^(test|spec|features)\//)
   spec.require_paths = %w(lib)
 
+  spec.cert_chain = ['certs/jbellone.pem']
+  spec.signing_key = File.expand_path(File.join(Dir.home, '.gem', 'gem-private_key.pem')) if $0 =~ /gem\z/
+
   spec.add_development_dependency 'bundler', '~> 1.7'
   spec.add_development_dependency 'rake'
 end
