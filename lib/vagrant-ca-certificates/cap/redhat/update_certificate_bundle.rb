@@ -12,10 +12,11 @@ module VagrantPlugins
                 sh.sudo('find /etc/pki/tls/private -type f -exec cat {} \; | cat /etc/pki/tls/certs/ca-bundle.crt - > /etc/pki/tls/ca.private.crt')
                 sh.sudo('/bin/ln -fsn /etc/pki/tls/ca.private.crt /etc/pki/tls/cert.pem')
                 sh.execute(<<-SCRIPT, shell: '/bin/bash', sudo: true)
-[ ! -z "$JAVA_HOME" ] && \
+if [ ! -z "$JAVA_HOME" ]; then \
 find /etc/pki/tls/private -type f -exec $JAVA_HOME/bin/keytool -importcert \
  -trustcacerts -noprompt -storepass changeit \
- -keystore $JAVA_HOME/jre/lib/security/cacerts -file {} \\;
+ -keystore $JAVA_HOME/jre/lib/security/cacerts -file {} \\; \
+else true; fi
                 SCRIPT
               else
                 sh.sudo('update-ca-trust enable')
