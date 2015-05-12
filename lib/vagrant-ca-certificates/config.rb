@@ -28,8 +28,8 @@ module VagrantPlugins
           # If the certificates specified do not exist on the host
           # disk we should error out very loudly. Because this will
           # likely affect guest operation.
-          @certs.reject { |f| File.exist?(f) }.each do |f|
-            errors << I18n.t('vagrant-ca-certificates.certificate.not_found', filepath: f)
+          @certs.reject { |f| f =~ /^http[s]?/ || File.exist?(f) }.each do |f|
+            errors << I18n.t('vagrant_ca_certificates.certificate.not_found', filepath: f)
           end
         end
 
