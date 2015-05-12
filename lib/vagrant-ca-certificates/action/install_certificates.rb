@@ -55,18 +55,18 @@ module VagrantPlugins
 
         def upload_certificate(from, to)
           @logger.debug("Uploading certificates #{from} -> #{to}")
-          remote = Tempfile.new('vagrant-ca-certificates')
           if from =~ /^http[s]?/
+            remote = Tempfile.new('vagrant-ca-certificates')
             Vagrant::Util::Downloader.new(from, remote.path).download!
             from = remote.path
           end
 
           @machine.communicate.tap do |sh|
             unless certificate_matches?(from, to)
-              remote = Tempfile.new('vagrant')
+              tmp_to = Pathname.new(Tempfile.new('vagrant').path).basename
               @machine.ui.info(I18n.t('vagrant_ca_certificates.certificate.upload.file', from: from, to: to))
-              sh.upload(from, remote.path)
-              sh.sudo("mv #{remote.path} #{to} && chown root: #{to} && chmod 0644 #{to}")
+              sh.upload(from, tmp_to) # remote.path will build a "C:\" URI on windows, cp to ~ and move
+              sh.sudo("mv #{tmp_to} #{to} && chown root: #{to} && chmod 0644 #{to}")
             end
           end
         end
