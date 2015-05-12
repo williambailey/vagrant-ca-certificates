@@ -22,11 +22,6 @@ module VagrantPlugins
         hook.after(Vagrant::Action::Builtin::Provision, Action::InstallCertificates)
       end
 
-      action_hook(:install_ca_certificates) do |hook|
-        require_relative 'action/install_certificates'
-        hook.after(:run_provisioner, Action::InstallCertificates)
-      end
-
       # All supported guest systems must have these capabilities
       # implemented. If any of them aren't config validate will fail.
       guest_capability('debian', 'update_certificate_bundle') do
