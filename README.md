@@ -42,7 +42,7 @@ both the proxies and inject in our new certificate bundles.
 
 If you're following the complete tutorial here we're going to save
 this file in a newly created directory
-`~/.kitchen/Vagrantfile.rb`. This will be merged into the final
+`~/.vagrant.d/Vagrantfile`. This will be merged into the final
 Vagrantfile configuration that the test-kitchen run will use to
 provision a new instance.
 ```ruby
@@ -74,8 +74,6 @@ test-kitchen runs for this user (on this host machine).
 ---
 driver:
     provision: true
-    vagrantfiles:
-        - "/home/jbellone/.kitchen/Vagrantfile"
     http_proxy: "http://proxy.corporate.com:80"
     https_proxy: "http://proxy.corporate.com:80"
     ftp_proxy: "http://proxy.corporate.com:80"
