@@ -46,19 +46,16 @@ this file in a newly created directory
 Vagrantfile configuration that the test-kitchen run will use to
 provision a new instance.
 ```ruby
-# These are requirements for this base Vagrantfile. If they are not
-# installed there will be a warning message with Vagrant/test-kitchen.
-%w(vagrant-ca-certificates vagrant-proxyconf).each do |name|
-  fail "Please install the '#{name}' plugin!" unless Vagrant.has_plugin?(name)
-end
-
 Vagrant.configure('2') do |config|
-  config.proxy.enabled = true
-  config.ca_certificates.enabled = true
-  config.ca_certificates.certs = [
-    '/etc/pki/ca-trust/source/anchors/root.crt',
-    '/etc/pki/ca-trust/source/anchors/sub.crt'
-  ]
+  config.proxy.enabled = true if Vagrant.has_plugin?('vagrant-proxyconf')
+
+  if Vagrant.has_plugin?('vagrant-ca-certificates')
+    config.ca_certificates.enabled = true
+    config.ca_certificates.certs = [
+      '/etc/pki/ca-trust/source/anchors/root.crt',
+      '/etc/pki/ca-trust/source/anchors/sub.crt'
+    ]
+  end
 end
 ```
 ### Writing a .kitchen.local.yml
@@ -93,8 +90,10 @@ the specified certificates.
 
 ```ruby
 Vagrant.configure('2') do |config|
-  config.ca_certificates.enabled = true
-  config.ca_certificates.certs = Dir.glob('/etc/pki/ca-trust/source/anchors/*.crt')
+  if Vagrant.has_plugin?('vagrant-ca-certificates')
+    config.ca_certificates.enabled = true
+    config.ca_certificates.certs = Dir.glob('/etc/pki/ca-trust/source/anchors/*.crt')
+  end
 end
 ```
 ### System Wide
