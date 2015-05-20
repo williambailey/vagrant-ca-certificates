@@ -34,6 +34,11 @@ module VagrantPlugins
         Cap::Redhat::UpdateCertificateBundle
       end
 
+      guest_capability('coreos', 'update_certificate_bundle') do
+        require_relative 'cap/coreos/update_certificate_bundle'
+        Cap::CoreOS::UpdateCertificateBundle
+      end
+
       guest_capability('debian', 'certificate_upload_path') do
         require_relative 'cap/debian/certificate_upload_path'
         Cap::Debian::CertificateUploadPath
@@ -44,6 +49,11 @@ module VagrantPlugins
         Cap::Redhat::CertificateUploadPath
       end
 
+      guest_capability('coreos', 'certificate_upload_path') do
+        require_relative 'cap/coreos/certificate_upload_path'
+        Cap::CoreOS::CertificateUploadPath
+      end
+
       guest_capability('debian', 'certificate_file_bundle') do
         require_relative 'cap/debian/certificate_file_bundle'
         Cap::Debian::CertificateFileBundle
@@ -52,6 +62,11 @@ module VagrantPlugins
       guest_capability('redhat', 'certificate_file_bundle') do
         require_relative 'cap/redhat/certificate_file_bundle'
         Cap::Redhat::CertificateFileBundle
+      end
+
+      guest_capability('coreos', 'certificate_file_bundle') do
+        require_relative 'cap/coreos/certificate_file_bundle'
+        Cap::CoreOS::CertificateFileBundle
       end
     end
   end
