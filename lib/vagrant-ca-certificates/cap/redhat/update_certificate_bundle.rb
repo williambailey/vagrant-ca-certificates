@@ -9,7 +9,13 @@ module VagrantPlugins
           def self.update_certificate_bundle(m)
             m.communicate.tap do |sh|
               if Redhat.legacy_certificate_bundle?(sh)
-                sh.sudo('find /etc/pki/tls/private -type f -exec cat {} \; | cat /etc/pki/tls/certs/ca-bundle.crt - > /etc/pki/tls/ca.private.crt')
+                sh.sudo(<<-SCRIPT)
+BUNDLE=/etc/pki/tls/certs/ca-bundle.crt; 
+PRIVATE=/etc/pki/tls/ca.private.crt; 
+if ! [ "$(readlink $BUNDLE)" == "$PRIVATE" ]; then 
+  find /etc/pki/tls/private -type f -exec cat {} \\; | cat $BUNDLE - > $PRIVATE ; 
+fi
+SCRIPT
                 sh.sudo('/bin/ln -fsn /etc/pki/tls/ca.private.crt /etc/pki/tls/cert.pem')
                 sh.sudo('/bin/ln -fsn /etc/pki/tls/ca.private.crt /etc/pki/tls/certs/ca-bundle.crt')
                 sh.execute(<<-SCRIPT, shell: '/bin/bash', sudo: true)
