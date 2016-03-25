@@ -25,5 +25,4 @@ Gem::Specification.new do |spec|
   spec.signing_key = File.expand_path(File.join(Dir.home, '.gem', 'gem-private_key.pem')) if $0 =~ /gem\z/
 
   spec.add_development_dependency 'bundler', '~> 1.7'
-  spec.add_development_dependency 'rake'
 end
