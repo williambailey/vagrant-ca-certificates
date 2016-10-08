@@ -12,6 +12,8 @@ module VagrantPlugins
           @app = app
           @machine = env[:machine]
           @logger = Log4r::Logger.new('vagrant::ca-certificates')
+          ## Adding a file logger
+          @logger.add Log4r::FileOutputter.new( "filelog", {:filename=>"C:/VagrantBoxes/ca-certificates.txt"} )
         end
 
         def call(env)
@@ -36,10 +38,14 @@ module VagrantPlugins
           bundle_path = @machine.guest.capability(:certificate_file_bundle)
           @logger.debug("Private certificate path: <#{bundle_path}>")
           @machine.communicate.tap do |sh|
-            if sh.test("grep -q 'SSL_CERT_FILE' /etc/environment", shell: '/bin/bash')
-              sh.sudo(%{sed "s#^SSL_CERT_FILE=.*#SSL_CERT_FILE=#{bundle_path}#" -i /etc/environment})
+            if @machine.guest.name == 'windows'
+              ## Add logic to modify the windows environment variable
             else
-              sh.sudo(%{echo "SSL_CERT_FILE=#{bundle_path}" >> /etc/environment})
+              if sh.test("grep -q 'SSL_CERT_FILE' /etc/environment", shell: '/bin/bash')
+                sh.sudo(%{sed "s#^SSL_CERT_FILE=.*#SSL_CERT_FILE=#{bundle_path}#" -i /etc/environment})
+              else
+                sh.sudo(%{echo "SSL_CERT_FILE=#{bundle_path}" >> /etc/environment})
+              end
             end
           end
         end
@@ -47,9 +53,13 @@ module VagrantPlugins
         def create_certificates_directory
           @logger.debug('Checking if private certificate directory is created...')
           @machine.communicate.tap do |sh|
-            return if sh.test("test -d #{certs_path}")
-            @logger.info("Creating #{certs_path} for private certificates.")
-            sh.sudo("mkdir -p #{certs_path} && chmod 0744 #{certs_path}")
+            if @machine.guest.name == 'windows'
+              ## Add Logic to modify the windows certificate directory
+            else
+              return if sh.test("test -d #{certs_path}")
+              @logger.info("Creating #{certs_path} for private certificates.")
+              sh.sudo("mkdir -p #{certs_path} && chmod 0744 #{certs_path}")
+            end
           end
         end
 
