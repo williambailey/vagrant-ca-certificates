@@ -5,13 +5,10 @@ module VagrantPlugins
         # Capability for configuring the certificate bundle on CoreOS.
         module UpdateCertificateBundle
           def self.update_certificate_bundle(m)
-            #m.communicate.sudo("ls /etc/ssl/certs | awk '{print \"private/\"$1;}' >> /etc/ca-certificates.conf") # enable our custom certs
-            #m.communicate.sudo('update-ca-certificates') do |type, data|
-            #  if [:stderr, :stdout].include?(type)
-            #    next if data =~ /stdin: is not a tty/
-            #    m.env.ui.info data
-            #  end
-            #end
+            # Import the certificates into the local machine root store
+            m.communicate.sudo("Get-ChildItem -Path C:/ssl/certs | Import-Certificate -CertStoreLocation Cert:/LocalMachine/root")
+            # Also import the certificates into a bundle to be referenced by SSL_CERT_FILE
+            m.communicate.sudo("Remove-Item -Path C:/ssl/certs/ca-certificates.crt; Get-ChildItem -Path C:/ssl/certs | Get-Content | Out-File -FilePath C:/ssl/certs/ca-certificates.crt -Append")
           end
         end
       end
