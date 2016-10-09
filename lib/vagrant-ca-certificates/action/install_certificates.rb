@@ -12,8 +12,6 @@ module VagrantPlugins
           @app = app
           @machine = env[:machine]
           @logger = Log4r::Logger.new('vagrant::ca-certificates')
-          ## Adding a file logger
-          @logger.add Log4r::FileOutputter.new( "filelog", {:filename=>"C:/VagrantBoxes/ca-certificates.txt"} )
         end
 
         def call(env)
