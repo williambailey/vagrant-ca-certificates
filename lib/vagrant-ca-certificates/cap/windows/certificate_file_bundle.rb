@@ -4,7 +4,7 @@ module VagrantPlugins
       module Windows
         module CertificateFileBundle
           def self.certificate_file_bundle(m)
-            'C:/ssl/certs/cacert.pem'
+            'C:/ssl/cacert.pem'
           end
         end
       end
