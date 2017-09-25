@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = %w(lib)
 
   spec.cert_chain = ['certs/jbellone.pem']
-  spec.signing_key = File.expand_path(File.join(Dir.home, '.gem', 'gem-private_key.pem')) if $0 =~ /gem\z/
+  spec.signing_key = File.expand_path(File.join(Dir.home, '.ssh', 'gem-private_key.pem')) if $0 =~ /gem\z/
 
   spec.add_development_dependency 'bundler', '~> 1.7'
 end
