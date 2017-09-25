@@ -2,6 +2,6 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :test do
+  gem 'rake'
   gem 'rspec'
-  gem 'vagrant', git: 'https://github.com/mitchellh/vagrant.git'
 end
